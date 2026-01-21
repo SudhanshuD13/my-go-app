@@ -1,0 +1,20 @@
+services:
+  go-api:
+    image: sudhanshud100/my-go-app:latest
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+
+  angular-frontend:
+    image: sudhanshud100/my-angular-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - go-api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

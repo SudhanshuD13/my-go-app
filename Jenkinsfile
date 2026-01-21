@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Apne details yahan update karo
         DOCKER_USER = 'sudhanshud100'
         IMAGE_NAME  = 'my-go-app'
-        DOCKER_HUB_CREDS = 'docker-hub-creds' // Jo Jenkins mein ID banayi thi
+        DOCKER_HUB_CREDS = 'docker-hub-creds' 
     }
 
     stages {
@@ -45,6 +44,17 @@ pipeline {
                 echo "Removing local images to save space..."
                 sh "docker rmi ${DOCKER_USER}/${IMAGE_NAME}:v${env.BUILD_ID}"
                 sh "docker rmi ${DOCKER_USER}/${IMAGE_NAME}:latest"
+            }
+        }
+        stage('Full Stack Deploy') {
+            steps {
+                script {
+                    echo "Deploying Full Stack App..."
+                    // docker-compose command ab chalegi
+                    sh "docker-compose down" // Purana saaf karo
+                    sh "docker-compose up -d" // Naya up karo
+                    sh "docker ps" // Verify karne ke liye
+                }
             }
         }
     }
