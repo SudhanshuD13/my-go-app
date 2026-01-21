@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        // Apne details yahan update karo
+        DOCKER_USER = 'sudhanshud100'
+        IMAGE_NAME  = 'my-go-app'
+        DOCKER_HUB_CREDS = 'docker-hub-creds' // Jo Jenkins mein ID banayi thi
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Ye stage GitHub se code download karegi
+                checkout scm
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    echo "Building Docker Image..."
+                    // Build number ko version ki tarah use karenge (v1, v2...)
+                    sh "docker build -t ${DOCKER_USER}/${IMAGE_NAME}:v${env.BUILD_ID} ."
+                    sh "docker tag ${DOCKER_USER}/${IMAGE_NAME}:v${env.BUILD_ID} ${DOCKER_USER}/${IMAGE_NAME}:latest"
+                }
+            }
+        }
+
+        stage('Docker Hub Push') {
+            steps {
+                script {
+                    // Jenkins credentials manager se login karega
+                    withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDS}", passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER_ENV')]) {
+                        sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER_ENV --password-stdin"
+                        sh "docker push ${DOCKER_USER}/${IMAGE_NAME}:v${env.BUILD_ID}"
+                        sh "docker push ${DOCKER_USER}/${IMAGE_NAME}:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                echo "Removing local images to save space..."
+                sh "docker rmi ${DOCKER_USER}/${IMAGE_NAME}:v${env.BUILD_ID}"
+                sh "docker rmi ${DOCKER_USER}/${IMAGE_NAME}:latest"
+            }
+        }
+    }
+}
