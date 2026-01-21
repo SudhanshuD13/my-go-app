@@ -28,5 +28,5 @@ func main() {
 	})
 
 	fmt.Println("Server v2 starting at :8081...")
-	http.ListenAndServe(":8081", nil)
+	http.ListenAndServe("0.0.0.0:8081", nil)
 }
