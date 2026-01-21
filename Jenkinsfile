@@ -14,7 +14,22 @@ pipeline {
                 checkout scm
             }
         }
-
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    // Ye tool automatic download hoga
+                    def scannerHome = tool 'sonar-scanner'
+                    
+                    // Ye name 'SonarQube' wahi hai jo Step 3-C mein diya tha
+                    withSonarQubeEnv('SonarQube') {
+                        sh "${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=my-go-app \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://localhost:9000"
+                    }
+                }
+            }
+        }
         stage('Docker Build') {
             steps {
                 script {
