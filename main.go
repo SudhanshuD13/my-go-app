@@ -1,15 +1,32 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"time"
 )
 
-func main() {
-    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "Hello! Golang Docker image successfully running.")
-    })
+// Response structure define karte hain
+type StatusResponse struct {
+	Message   string    `json:"message"`
+	Timestamp time.Time `json:"timestamp"`
+	Status    string    `json:"status"`
+}
 
-    fmt.Println("Server starting at :8080")
-    http.ListenAndServe(":8080", nil)
+func main() {
+	http.HandleFunc("/api/status", func(w http.ResponseWriter, r *http.Request) {
+		res := StatusResponse{
+			Message:   "Golang API v2 is running smoothly!",
+			Timestamp: time.Now(),
+			Status:    "Success",
+		}
+
+		// Header set karo taaki browser ko pata chale ye JSON hai
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(res)
+	})
+
+	fmt.Println("Server v2 starting at :8080...")
+	http.ListenAndServe(":8080", nil)
 }
