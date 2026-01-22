@@ -57,8 +57,8 @@ pipeline {
         stage('Cleanup') {
             steps {
                 echo "Removing local images to save space..."
-                sh "docker rmi ${DOCKER_USER}/${IMAGE_NAME}:v${env.BUILD_ID}"
-                sh "docker rmi ${DOCKER_USER}/${IMAGE_NAME}:latest"
+                sh "docker rmi -f ${DOCKER_USER}/${IMAGE_NAME}:v${env.BUILD_ID} || true"
+                sh "docker rmi -f ${DOCKER_USER}/${IMAGE_NAME}:latest || true"
             }
         }
         stage('Full Stack Deploy') {
