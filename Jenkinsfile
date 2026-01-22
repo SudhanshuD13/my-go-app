@@ -25,7 +25,7 @@ pipeline {
                         sh "${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=my-go-app \
                         -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000"
+                        -Dsonar.host.url=http://sonarqube-server:9000"
                     }
                 }
             }
