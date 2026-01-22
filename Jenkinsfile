@@ -18,7 +18,8 @@ pipeline {
             steps{
                 script{
                     echo "Scannig the code .."
-                    sh "docker run --rm -v ${WORKSPACE}:/path zricethezav/gitleaks:latest detect --source=/path --no-git --verbose --redact"
+                    sh "docker run --rm -v ${WORKSPACE}:/path zricethezav/gitleaks:latest detect \
+                    --source=/path --no-git --report-format json --report-path /path/gitleaks-report.json --verbose --redact"   
                 }
             }
         }
